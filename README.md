@@ -30,13 +30,13 @@ class AuthorSchema(AssemblerSchema):
   id = fields.Integer()
   name = fields.String()
   rank = fields.Float()
-  books = fields.Relationship(BookSchema, on=BookSchema.id, many=True)
+  books = fields.Relationship(BookSchema, on=lambda self, inner: inner["id"] in self["books"], many=True)
 ```
 
 ## Load data by AssemblerSchema
 ```python3
 books = [{"id": 1, "name": "The last wish"}, {"id": 2, "name": "Sword of Destiny"}, {"id": 3, "name": "Blood of Elves"}]
-author = {"id": 1, "name": "Andzhey Sapkovsky", rank: 10.0, "books": [1, 2, 3]}
+author = {"id": 1, "name": "Andzhey Sapkovsky", "rank": 10.0, "books": [1, 2, 3]}
 schema = AuthorSchema()
 print(schema.load(author, books=books))
 >>> Author(id=1, name="Andzhey Sapkovsky", rank=10.0, books=[Book(id=1, name="The last wish"), Book(id=2, name="Sword of Destiny"), Book(id=3, name="Blood of Elves")])
